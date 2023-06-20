@@ -1,3 +1,17 @@
+# stage 1 buiid a dockerfiles for all project parts 
+# frontend backend and databse
+
+# the frontend running in nodejs env 
+# the backend also in nodejs env 
+# the database used in this code is mongodb 
+
+using ansible build automation to deploy localy the code ands run it in docker containers
+# stage 2 
+using terraform to depluy the code to aws in single jenkins stage
+
+## all the ci/cd must be as a pipeline in jenkins
+
+
 # Snappy - Chat Application 
 Snappy is chat application build with the power of MERN Stack. You can find the tutorial [here](https://www.youtube.com/watch?v=otaQKODEUFs)
 
