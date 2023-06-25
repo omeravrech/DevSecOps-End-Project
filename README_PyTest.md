@@ -1,0 +1,1 @@
+to run main.py you need to exsport URL before and run python3 main.py.
