@@ -29,7 +29,7 @@ pipeline {
         }
         stage('Raise dockers environment') {
             steps {
-                sh "docker-compose build --build-arg BACK_IMAGE_NAME=${env.BACK_IMAGE_NAME} FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}"
+                sh "docker-compose build --build-arg BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}"
                 sh 'docker-compose up -d'
             }
         }
