@@ -30,7 +30,7 @@ pipeline {
         }
         stage('print'){
             steps{
-                sh 'docker imaged'
+                sh 'docker images'
             }
         }
         stage('Raise dockers environment') {
