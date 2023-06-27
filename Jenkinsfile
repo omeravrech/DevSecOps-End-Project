@@ -3,8 +3,8 @@ pipeline {
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
-        FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         BACK_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
+        FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         backendImage = ""
         frontendImage = ""
     }
@@ -21,7 +21,7 @@ pipeline {
                 stage('Frontend build') {
                     steps {
                         script {
-                            env.frontendImage = docker.build(env.BACK_IMAGE_NAME, "./public")
+                            env.frontendImage = docker.build(env.FRONT_IMAGE_NAME, "./public")
                         }
                     }
                 }
@@ -29,6 +29,8 @@ pipeline {
         }
         stage('Raise dockers environment') {
             steps {
+                sh "export FRONT_IMAGE_NAME=${env.BACK_IMAGE_NAME}"
+                sh "export FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}"
                 sh 'docker-compose up -d'
             }
         }
