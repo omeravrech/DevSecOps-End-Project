@@ -1,0 +1,28 @@
+version: "1"
+services:
+  web:
+    depends_on:
+      - api
+    build: ./public #frontend
+    ports:
+      - 3001:3000
+  api:
+    depends_on:
+      - db
+    build: ./server #backend
+    ports:
+      - 5000:5000
+    environment:
+      - DB_URL=mongo://db//vidly
+  db:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - vidly:/data/db
+volumes:
+  vidly:
+  
+  
+
+
