@@ -3,19 +3,23 @@ services:
   web:
     depends_on:
       - api
-    build: ./public #frontend
+    build: frontend #frontend
     ports:
-      - 3001:3000
+      - 3000:3000
   api:
     depends_on:
       - db
-    build: ./server #backend
+    image: backend #backend
     ports:
       - 5000:5000
     environment:
       - DB_URL=mongo://db//vidly
   db:
     image: mongo
+    environment:
+       MONGO_INITDB_ROOT_USERNAME: root
+       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+       MONGO_INITDB_DATABASE: chat
     ports:
       - 27017:27017
     volumes:
