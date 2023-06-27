@@ -3,20 +3,26 @@ pipeline {
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
+        FRONT_IMAGE_NAME = "${env.GIT_BRANCH}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
+        BACK_IMAGE_NAME = "${env.GIT_BRANCH}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
     }
     stages {
+        def backendImage
+        def frontendImage
         stage('Prepering environment') {
             parallel {
                 stage('Backend build') {
                     steps {
-                        sh "docker build -t backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} ./server"
-                        sh "docker tag backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} backend:latest"
+                        script {
+                            backendImage = docker.build(BACK_IMAGE_NAME, "./server")
+                        }
                     }
                 }
                 stage('Frontend build') {
                     steps {
-                        sh "docker build -t frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} ./public"
-                        sh "docker tag frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} frontend:latest"
+                        script {
+                            frontendImage = docker.build(BACK_IMAGE_NAME, "./server")
+                        }
                     }
                 }
             }
@@ -36,12 +42,15 @@ pipeline {
                 }
             }
         }
-        stage('Clean up'){
-            steps{
-                sh "docker-compose down"
-                sh "docker rmi -f backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
-                sh "docker rmi -f frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
-            }
+    }
+    post {
+        failure {
+            sh "docker-compose down"
+            sh "docker rmi -f ${backendImage.imageName()}"
+            sh "docker rmi -f ${frontendImage.imageName()}"
+        }
+        cleanup {
+            cleanWs()
         }
     }
 }
