@@ -5,23 +5,23 @@ pipeline {
         MINOR_BUILD = 0
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         BACK_IMAGE_NAME = "${env.GIT_BRANCH}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
+        backendImage = ""
+        frontendImage = ""
     }
     stages {
-        def backendImage
-        def frontendImage
         stage('Prepering environment') {
             parallel {
                 stage('Backend build') {
                     steps {
                         script {
-                            backendImage = docker.build(BACK_IMAGE_NAME, "./server")
+                            env.backendImage = docker.build(env.BACK_IMAGE_NAME, "./server")
                         }
                     }
                 }
                 stage('Frontend build') {
                     steps {
                         script {
-                            frontendImage = docker.build(BACK_IMAGE_NAME, "./server")
+                            env.frontendImage = docker.build(env.BACK_IMAGE_NAME, "./server")
                         }
                     }
                 }
@@ -46,8 +46,8 @@ pipeline {
     post {
         failure {
             sh "docker-compose down"
-            sh "docker rmi -f ${backendImage.imageName()}"
-            sh "docker rmi -f ${frontendImage.imageName()}"
+            sh "docker rmi -f ${env.backendImage.imageName()}"
+            sh "docker rmi -f ${env.frontendImage.imageName()}"
         }
         cleanup {
             cleanWs()
