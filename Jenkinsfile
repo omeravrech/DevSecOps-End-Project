@@ -21,7 +21,7 @@ pipeline {
                 stage('Frontend build') {
                     steps {
                         script {
-                            env.frontendImage = docker.build(env.BACK_IMAGE_NAME, "./server")
+                            env.frontendImage = docker.build(env.BACK_IMAGE_NAME, "./public")
                         }
                     }
                 }
