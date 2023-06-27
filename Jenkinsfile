@@ -30,7 +30,7 @@ pipeline {
         }
         stage('print'){
             steps{
-                sh 'docker images'
+                sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
             }
         }
         stage('rde'){
