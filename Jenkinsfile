@@ -33,14 +33,14 @@ pipeline {
                 sh 'docker images'
             }
         }
-        stage('Raise dockers environment') {
-            steps{
-                sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
-                // sh "echo 'BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}'"
-                // sh "docker-compose build --build-arg BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}"
-                // sh 'docker-compose up -d'
-            }
-        }
+        // stage('Raise dockers environment') {
+        //     steps{
+        //         sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
+        //         // sh "echo 'BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}'"
+        //         // sh "docker-compose build --build-arg BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}"
+        //         // sh 'docker-compose up -d'
+        //     }
+        // }
         stage('Post environment stage checks'){
             steps {
                 script {
