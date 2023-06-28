@@ -42,33 +42,25 @@ pipeline {
                 sh 'docker-compose up -d'
             }
         }
-        // stage('Raise dockers environment') {
-        //     steps{
-        //         sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
-        //         // sh "echo 'BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}'"
-        //         // sh "docker-compose build --build-arg BACK_IMAGE_NAME=${env.backendImage.imageName()} FRONT_IMAGE_NAME=${env.frontendImage.imageName()}"
-        //         // sh 'docker-compose up -d'
-        //     }
-        // }
-        // stage('Post environment stage checks'){
-        //     steps {
-        //         script {
-        //             def response = httpRequest "http://localhost:3000"
-        //             if (response.status != 200) {
-        //                 error "Failed to get a successful response"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Post environment stage checks'){
+            steps {
+                script {
+                    def response = httpRequest "http://localhost:3000"
+                    if (response.status != 200) {
+                        error "Failed to get a successful response"
+                    }
+                }
+            }
+        }
     }
-    // post {
-    //     failure {
-    //         sh "docker-compose down"
-    //         sh "docker rmi -f ${env.backendImage.imageName()}"
-    //         sh "docker rmi -f ${env.frontendImage.imageName()}"
-    //     }
-    //     cleanup {
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        success{
+            sh "docker-compose down"
+        }
+        cleanup {
+            sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
+            sh "docker rmi -f ${env.FRONT_IMAGE_NAME}"
+            cleanWs()
+        }
+    }
 }
