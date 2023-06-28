@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -47,6 +47,7 @@ pipeline {
         stage('Post environment stage checks'){
             steps {
                 script {
+                    sh 'ifconfig'
                     sh 'curl -v http://localhost:3000'
                     //def requestExitCode = sh(script: "curl -s -v --head --request GET http://localhost:3000 | grep '200 OK'", returnStatus: true)
                     //if (requestExitCode != 0) {
