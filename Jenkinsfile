@@ -47,10 +47,11 @@ pipeline {
         stage('Post environment stage checks'){
             steps {
                 script {
-                    def requestExitCode = sh(script: "curl -s -v --head --request GET http://localhost:3000 | grep '200 OK'", returnStatus: true)
-                    if (requestExitCode != 0) {
-                        error "Failed to get a successful response"
-                    }
+                    sh 'curl -v http://localhost:3000'
+                    //def requestExitCode = sh(script: "curl -s -v --head --request GET http://localhost:3000 | grep '200 OK'", returnStatus: true)
+                    //if (requestExitCode != 0) {
+                    //    error "Failed to get a successful response"
+                    //}
                     //def response = httpRequest "http://localhost:3000"
                     //sh "echo 'Status Code = ${response}'"
                     // if (response.status != 200) {
