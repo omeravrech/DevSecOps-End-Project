@@ -21,7 +21,7 @@ pipeline {
                 stage('Frontend build') {
                     steps {
                         script {
-                            env.frontenFRONT_IMAGEdImage = docker.build(env.FRONT_IMAGE_NAME, "./public")
+                            env.FRONT_IMAGE = docker.build(env.FRONT_IMAGE_NAME, "./public")
                             sh "echo BACK_IMAGE_NAME=${env.FRONT_IMAGE}"
                         }
                     }
@@ -30,7 +30,7 @@ pipeline {
         }
         stage('Raise dockers environment'){
             steps{
-                sh "echo ${BACK_IMAGE_NAME}=${env.BACK_IMAGE}\n${FRONT_IMAGE}=${env.FRONT_IMAGE_NAME}"
+                sh "echo ${env.BACK_IMAGE_NAME}=${env.BACK_IMAGE}\n\n${env.FRONT_IMAGE}=${env.FRONT_IMAGE_NAME}"
             }
         }
         // stage('Raise dockers environment') {
