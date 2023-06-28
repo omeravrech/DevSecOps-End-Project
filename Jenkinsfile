@@ -73,7 +73,12 @@ pipeline {
                             def response = null
                             retry(3) {
                                 sleep 10
-                                response = httpRequest url: "http://localhost:${env.BACK_PORT}/api/auth/register", httpMode: 'POST', requestBody: '{ "username": "test-user", "email": "test@email.com", "password": "some-test-password"}', customHeaders: [[name: 'Content-Type', value: 'application/json']]
+                                response = httpRequest(
+                                    url: "http://localhost:${env.BACK_PORT}/api/auth/register",
+                                    httpMode: 'POST',
+                                    requestBody: '{ "username": "test-user", "email": "test@email.com", "password": "some-test-password"}',
+                                    customHeaders: [[name: 'Content-Type', value: 'application/json'], [name: 'Origin', value: "http://localhost:${env.FRONT_PORT}"]]
+                                )
                             }
                             if ((response == null) || (response.status != 200)) {
                                 error "Failed to get a successful response"
