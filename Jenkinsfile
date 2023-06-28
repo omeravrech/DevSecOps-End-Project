@@ -61,18 +61,18 @@ pipeline {
             }
         }
     }
-    post {
-        cleanup {
-            script {
-                try {
-                    sh "docker-compose down"
-                } finally {
-                    sh 'echo docker-compose not running.'
-                }
-            }
-            sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
-            sh "docker rmi -f ${env.FRONT_IMAGE_NAME}"
-            cleanWs()
-        }
-    }
+    // post {
+    //     cleanup {
+    //         script {
+    //             try {
+    //                 sh "docker-compose down"
+    //             } finally {
+    //                 sh 'echo docker-compose not running.'
+    //             }
+    //         }
+    //         sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
+    //         sh "docker rmi -f ${env.FRONT_IMAGE_NAME}"
+    //         cleanWs()
+    //     }
+    // }
 }
