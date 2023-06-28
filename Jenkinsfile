@@ -43,7 +43,7 @@ pipeline {
                     sh 'docker-compose up -d'
                 }
                 env.COMPOSE_STATUS = true
-                
+
             }
         }
         stage('Post environment stage checks'){
@@ -61,8 +61,10 @@ pipeline {
     post {
         cleanup {
             script {
-                if (env.COMPOSE_STATUS) {
+                try {
                     sh "docker-compose down"
+                } finally {
+                    sh 'echo docker-compose not running.'
                 }
             }
             sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
