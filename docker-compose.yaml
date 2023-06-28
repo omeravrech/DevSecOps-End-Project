@@ -3,7 +3,7 @@ services:
   web:
     depends_on:
       - api
-    build: ${FRONT_IMAGE_NAME} #frontend
+    image: ${FRONT_IMAGE_NAME} #frontend
     ports:
       - 3000:3000
   api:
