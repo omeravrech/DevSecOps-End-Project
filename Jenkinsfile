@@ -5,7 +5,6 @@ pipeline {
         MINOR_BUILD = 0
         BACK_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
-        COMPOSE_STATUS = false
     }
     stages {
         stage('Prepering environment') {
@@ -42,7 +41,6 @@ pipeline {
                 withEnv(["BACK_IMAGE_NAME=${env.BACK_IMAGE_NAME}", "FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}"]) {
                     sh 'docker-compose up -d'
                 }
-                env.COMPOSE_STATUS = true
 
             }
         }
