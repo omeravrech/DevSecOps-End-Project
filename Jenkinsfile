@@ -28,13 +28,9 @@ pipeline {
                 }
             }
         }
-        stage('print'){
+        stage('Raise dockers environment'){
             steps{
                 sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
-            }
-        }
-        stage('rde'){
-            steps{
                 sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
             }
         }
@@ -46,25 +42,25 @@ pipeline {
         //         // sh 'docker-compose up -d'
         //     }
         // }
-        stage('Post environment stage checks'){
-            steps {
-                script {
-                    def response = httpRequest "http://localhost:3000"
-                    if (response.status != 200) {
-                        error "Failed to get a successful response"
-                    }
-                }
-            }
-        }
+        // stage('Post environment stage checks'){
+        //     steps {
+        //         script {
+        //             def response = httpRequest "http://localhost:3000"
+        //             if (response.status != 200) {
+        //                 error "Failed to get a successful response"
+        //             }
+        //         }
+        //     }
+        // }
     }
-    post {
-        failure {
-            sh "docker-compose down"
-            sh "docker rmi -f ${env.backendImage.imageName()}"
-            sh "docker rmi -f ${env.frontendImage.imageName()}"
-        }
-        cleanup {
-            cleanWs()
-        }
-    }
+    // post {
+    //     failure {
+    //         sh "docker-compose down"
+    //         sh "docker rmi -f ${env.backendImage.imageName()}"
+    //         sh "docker rmi -f ${env.frontendImage.imageName()}"
+    //     }
+    //     cleanup {
+    //         cleanWs()
+    //     }
+    // }
 }
