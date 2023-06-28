@@ -27,19 +27,20 @@ pipeline {
         }
         stage('Verify images') {
             steps {
-                sh """
-                    if [ '$(docker images | grep ${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} | wc -l )' == '2' ]; then
-                        echo 'Images are ready to impliment.'
-                    else
-                        error 'Failed to build images.'
-                    fi
-                """
+                script {
+                    def exitCode1 = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                    def exitCode2 = sh(script: "docker inspect ${env.FRONT_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                    if (exitCode1 != 0 || exitCode2 != 0) {
+                        error "One or more builds failed"
+                    }
+                }
             }
         }
         stage('Raise dockers environment'){
             steps{
-                sh "docker-compose build --build-arg BACK_IMAGE_NAME=${BACK_IMAGE_NAME} FRONT_IMAGE_NAME=${FRONT_IMAGE_NAME}"
-                sh 'docker-compose up -d'
+                withEnv(["BACK_IMAGE_NAME=${env.BACK_IMAGE_NAME}", "FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}"]) {
+                    sh 'docker-compose up -d'
+                }
             }
         }
         stage('Post environment stage checks'){
