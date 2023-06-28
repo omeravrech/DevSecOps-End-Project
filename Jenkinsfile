@@ -21,9 +21,9 @@ pipeline {
                 stage('Frontend build') {
                     steps {
                         script {
-                            def imageBuild = docker.build("${env.FRONT_IMAGE_NAME}", "--no-cache ./public")
-                            env.FRONT_IMAGE = imageBuild
-                            sh "echo ${env.FRONT_IMAGE_NAME} = ${env.FRONT_IMAGE} | ${imageBuild}"
+                            docker.build("${env.FRONT_IMAGE_NAME}", "--no-cache ./public")
+                            env.FRONT_IMAGE = docker.image("${env.FRONT_IMAGE_NAME}")
+                            sh "echo ${env.FRONT_IMAGE_NAME} = ${env.FRONT_IMAGE}"
                         }
                     }
                 }
