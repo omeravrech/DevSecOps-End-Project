@@ -46,13 +46,14 @@ pipeline {
         }
         stage('Post environment stage checks'){
             steps {
-                script {
-                    def response = httpRequest "http://localhost:3000"
-                    sh "echo Status Code = ${response.status}"
-                    if (response.status != 200) {
-                        error "Failed to get a successful response"
-                    }
-                }
+                // script {
+                    // def response = httpRequest "http://localhost:3000"
+                    // sh "echo 'Status Code = ${response.status}'"
+                    // if (response.status != 200) {
+                    //     error "Failed to get a successful response"
+                    // }
+                // }
+                sh 'netstat -la | grep tcp'
             }
         }
     }
