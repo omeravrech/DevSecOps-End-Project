@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     def response = httpRequest "http://localhost:3000"
-                    sh "echo 'Status Code = ${response.status}'"
+                    sh "echo 'Status Code = ${response}'"
                     // if (response.status != 200) {
                     //     error "Failed to get a successful response"
                     // }
