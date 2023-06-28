@@ -28,10 +28,10 @@ pipeline {
         stage('Verify images') {
             steps {
                 sh """
-                    if [ "$(docker images | grep ${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} | wc -l )" == "2" ]; then
-                        echo "Images are ready to impliment."
+                    if [ '$(docker images | grep ${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID} | wc -l )' == '2' ]; then
+                        echo 'Images are ready to impliment.'
                     else
-                        error "Failed to build images."
+                        error 'Failed to build images.'
                     fi
                 """
             }
