@@ -59,7 +59,7 @@ pipeline {
                             def response = null
                             retry(3) {
                                 sleep 10
-                                response = httpRequest "http://localhost:${env.FRONT_PORT}/api/auth/login"
+                                response = httpRequest "http://localhost:${env.FRONT_PORT}"
                             }
                             if ((response == null) || (response.status != 200)) {
                                 error "Failed to get a successful response"
