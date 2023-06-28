@@ -23,6 +23,7 @@ pipeline {
                         sh "echo $FRONT_IMAGE_NAME"
                         script {
                             env.frontendImage = docker.build(env.FRONT_IMAGE_NAME, "./public")
+                            sh "echo BACK_IMAGE_NAME=${env.frontendImage}"
                         }
                     }
                 }
