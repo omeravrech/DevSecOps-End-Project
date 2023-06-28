@@ -14,15 +14,15 @@ pipeline {
                 stage('Backend build') {
                     steps {
                         script {
-                            env.BACK_IMAGE = docker.build(env.BACK_IMAGE_NAME, "./server")
+                            env.BACK_IMAGE = docker.build("${env.BACK_IMAGE_NAME}", "-f ./server --no-cache")
                         }
                     }
                 }
                 stage('Frontend build') {
                     steps {
                         script {
-                            env.FRONT_IMAGE = docker.build(env.FRONT_IMAGE_NAME, "./public")
-                            sh "echo n${env.FRONT_IMAGE}=${env.FRONT_IMAGE_NAME}"
+                            env.FRONT_IMAGE = docker.build("${env.FRONT_IMAGE_NAME}", "-f ./public --no-cache")
+                            sh "echo ${env.FRONT_IMAGE}=${env.FRONT_IMAGE_NAME}"
                         }
                     }
                 }
