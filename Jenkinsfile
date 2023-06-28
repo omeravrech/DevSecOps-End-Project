@@ -30,8 +30,7 @@ pipeline {
         }
         stage('Raise dockers environment'){
             steps{
-                sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
-                sh "echo BACK_IMAGE_NAME=${env.backendImage.imageName()}"
+                sh "echo BACK_IMAGE_NAME=${env.backendImage}"
             }
         }
         // stage('Raise dockers environment') {
