@@ -9,16 +9,16 @@ pipeline {
         FRONT_PORT = 3000
     }
     stages {
-        stage('Prepering environment') {
+        stage('General | Prepering environment') {
             parallel {
-                stage('Backend build') {
+                stage('Backend | Build') {
                     steps {
                         script {
                             docker.build("${env.BACK_IMAGE_NAME}", "--no-cache ./server")
                         }
                     }
                 }
-                stage('Frontend build') {
+                stage('Frontend | Build') {
                     steps {
                         script {
                             docker.build("${env.FRONT_IMAGE_NAME}", "--no-cache ./public")
@@ -27,7 +27,7 @@ pipeline {
                 }
             }
         }
-        stage('Verify images') {
+        stage('General | Verify images') {
             steps {
                 script {
                     def exitCode1 = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
@@ -38,22 +38,22 @@ pipeline {
                 }
             }
         }
-        stage('Raise dockers environment'){
+        stage('General | Raise dockers environment'){
             steps{
                 withEnv([
                     "BACK_IMAGE_NAME=${env.BACK_IMAGE_NAME}",
                     "BACK_PORT=${env.BACK_PORT}",
                     "FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}",
-                    "FRON_PORT=${env.FRONT_PORT}"
+                    "FRONT_PORT=${env.FRONT_PORT}"
                 ]) {
                     sh 'docker-compose up -d'
                 }
 
             }
         }
-        stage('Docker integrity checks'){
+        stage('General | Integrity checks'){
             parallel {
-                stage("Frontend - integrity checks") {
+                stage("Frontend | Integrity checks") {
                     steps {
                         script {
                             def response = null
@@ -67,7 +67,7 @@ pipeline {
                         }
                     }
                 }
-                // stage("Backend - integrity checks") {
+                // stage("Backend | Integrity checks") {
                 //     steps {
                 //         script {
                 //             def response = null
