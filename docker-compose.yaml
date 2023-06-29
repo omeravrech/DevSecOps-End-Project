@@ -5,13 +5,13 @@ services:
       - api
     image: ${FRONT_IMAGE_NAME} #frontend
     ports:
-      - ${env.FRONT_PORT}:3000
+      - ${FRONT_PORT}:3000
   api:
     depends_on:
       - db
     image: ${BACK_IMAGE_NAME} #backend
     ports:
-      - ${env.BACK_PORT}:5000
+      - ${BACK_PORT}:5000
     environment:
       - DB_URL=mongo://db//chat
   db:
