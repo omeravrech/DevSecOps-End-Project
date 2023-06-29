@@ -5,15 +5,15 @@ services:
       - api
     image: ${FRONT_IMAGE_NAME} #frontend
     ports:
-      - 3000:3000
+      - ${env.FRONT_PORT}:3000
   api:
     depends_on:
       - db
     image: ${BACK_IMAGE_NAME} #backend
     ports:
-      - 5000:5000
+      - ${env.BACK_PORT}:5000
     environment:
-      - DB_URL=mongo://db//vidly
+      - DB_URL=mongo://db//chat
   db:
     image: mongo
     environment:
@@ -23,9 +23,9 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - vidly:/data/db
+      - chat:/data/db
 volumes:
-  vidly:
+  chat:
   
   
 
