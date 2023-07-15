@@ -1,8 +1,10 @@
 import requests
 import os
+import pytest
 
 def get_status_code(url):
     response = requests.get(url)
+    print(response.status_code)
     return response.status_code
 
 def print_status_message(url):
@@ -55,11 +57,16 @@ def print_status_message(url):
     else:
         print("Unknown status code:", status_code)
 
-u = os.environ.get('URL')
-u = 'https://' + u if u and not u.startswith('https://') else u
+def test_print_status_message():
+    u = os.environ.get('URL')
+    u = 'https://' + u if u and not u.startswith('https://') else u
 
-if u:
-    print(u)
-    print_status_message(u)
-else:
-    print("URL is not set or is invalid")
+    if u:
+        print(u)
+        print_status_message(u)
+        assert True  # If the code runs without exceptions, consider the test passed
+    else:
+        pytest.fail("URL is not set or is invalid")
+
+# Run the test function
+test_print_status_message()
