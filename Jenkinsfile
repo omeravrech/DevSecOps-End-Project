@@ -23,7 +23,9 @@ pipeline {
             }  
         }
         stage('Verify developing') {
-            sh 'pytest main.py'
+            steps{
+                sh 'pytest main.py'
+            }
         }
     }
 }
