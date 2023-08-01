@@ -1,5 +1,4 @@
 pipeline {
-    agent any
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -8,13 +7,18 @@ pipeline {
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_PORT = 3000
     }
+    
+    agent docker {
+            image "alpine:latest"
+            args "-u root" 
+    }
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'python --version'
-                sh 'pip --version'
-                sh 'pip3 install -r requirements.txt'
-                sh 'npm install'
+                sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
+                sh 'python3 -m ensurepip'
+                sh 'apk add --update nodejs npm'
+                sh 'pip install -r requirements.txt'
             }
         }
         stage('Development | Startup server') {
