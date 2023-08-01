@@ -1,23 +1,31 @@
 pipeline {
     agent any
+    environment {
+        MAJOR_BUILD = 1
+        MINOR_BUILD = 0
+        BACK_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
+        BACK_PORT = 5000
+        FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
+        FRONT_PORT = 3000
+    }
     stages {
-        stage('Build') {
+        stage('Development | Prepering environment') {
             steps {
-                echo "Starting the building phase"
-                echo "Ending the building phase"
+                sh 'pip install -r requirements.txt'
+                sh 'npm install'
             }
         }
-        stage('Test') {
-            steps {
-                echo "Starting the testing phase"
-                echo "Ending the testing phase"
+        stage('Development | Startup server') {
+            withEnv([
+                "PORT=${env.FRONT_PORT}"
+            ]) {
+                steps {
+                    'npm start -d'
+                }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo "Starting the deployment phase"
-                echo "Ending the deployment phase"
-            }
+        stage('Verify developing') {
+            sh 'pytest main.py'
         }
     }
 }
