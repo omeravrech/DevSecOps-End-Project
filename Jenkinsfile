@@ -8,9 +8,11 @@ pipeline {
         FRONT_PORT = 3000
     }
     
-    agent docker {
+    agent {
+        docker {
             image "alpine:latest"
             args "-u root" 
+        }
     }
     stages {
         stage('Development | Prepering environment') {
