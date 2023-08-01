@@ -19,7 +19,7 @@ pipeline {
             steps {
                 withEnv([
                     "PORT=${env.FRONT_PORT}"
-                ]) { 'npm start -d' }
+                ]) { sh 'npm start -d' }
             }  
         }
         stage('Verify developing') {
