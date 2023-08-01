@@ -11,6 +11,8 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
+                sh 'python --version'
+                sh 'pip --version'
                 sh 'pip3 install -r requirements.txt'
                 sh 'npm install'
             }
