@@ -20,7 +20,7 @@ pipeline {
                 sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
                 sh 'apk add --update nodejs npm'
-                sh 'pip install -r requirements.txt'
+                sh 'pip3 install -r requirements.txt'
             }
         }
         stage('Development | Startup server') {
