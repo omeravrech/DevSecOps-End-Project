@@ -16,13 +16,11 @@ pipeline {
             }
         }
         stage('Development | Startup server') {
-            withEnv([
-                "PORT=${env.FRONT_PORT}"
-            ]) {
-                steps {
-                    'npm start -d'
-                }
-            }
+            steps {
+                withEnv([
+                    "PORT=${env.FRONT_PORT}"
+                ]) { 'npm start -d' }
+            }  
         }
         stage('Verify developing') {
             sh 'pytest main.py'
