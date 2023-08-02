@@ -17,10 +17,16 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
+                
+                sh 'apk add --update --no-cache nodejs npm'
                 sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
-                sh 'apk add --update nodejs npm'
+            }
+        }
+        stage('Development | Intall dependencies') {
+            steps {
                 sh 'pip3 install -r requirements.txt'
+                sh 'npm install'
             }
         }
         stage('Development | Startup server') {
