@@ -17,8 +17,7 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'apt update'
-                sh 'apt install apparmor apturl -y'
+                sh 'apk add --update --no-cache apparmor apturl'
                 sh 'apk add --update --no-cache nodejs npm'
                 sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
