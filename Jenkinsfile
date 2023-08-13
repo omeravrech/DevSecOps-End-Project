@@ -21,7 +21,7 @@ pipeline {
                 sh 'pip3 install --no-cache --upgrade pip setuptools'
                 sh 'apk add --update --no-cache nodejs npm'
                 sh 'apk add --update --no-cache git'
-                checkout scm
+                sh 'git clone'
             }
         }
         stage('Development | Startup server') {
