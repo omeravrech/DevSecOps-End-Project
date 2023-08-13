@@ -17,10 +17,10 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'apt upgrade'
+                sh 'apt update'
                 sh 'apt install -y software-properties-common'
                 sh 'add-apt-repository ppa:deadsnakes/ppa'
-                sh 'apt upgrade'
+                sh 'apt update'
                 sh 'apt install -y python3.8 nodejs npm'
             }
         }
