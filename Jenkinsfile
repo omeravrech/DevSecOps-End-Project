@@ -15,10 +15,13 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
+                sh 'apk add --update --no-cache python3'
+                sh 'ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
                 sh 'pip3 install --no-cache --upgrade pip setuptools'
                 sh 'apk add --update --no-cache nodejs npm'
+                sh 'apk add --update --no-cache git'
+                checkout scm
             }
         }
         stage('Development | Startup server') {
