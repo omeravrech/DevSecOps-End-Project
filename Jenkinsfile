@@ -13,12 +13,12 @@ pipeline {
         FRONT_PORT = 3000
     }
     stages {
-        // stage('Development | Prepering environment - copy repo') {
-        //     steps {
-        //         sh 'apk add --update --no-cache git'
-        //         sh 'git clone $GIT_URL --branch $BRANCH_NAME'
-        //     }
-        // }
+        stage('Development | Prepering environment - Repo') {
+            steps {
+                sh 'cd server/'
+                sh 'ls -la'
+            }
+        }
         stage('Development | Prepering environment - install python') {
             steps {
                 sh 'apk add --update --no-cache python3'
