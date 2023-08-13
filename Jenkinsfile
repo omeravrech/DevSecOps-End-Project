@@ -15,7 +15,6 @@ pipeline {
     stages {
         stage('Development | Prepering environment - Repo') {
             steps {
-                sh 'cd server/'
                 sh 'ls -la'
             }
         }
