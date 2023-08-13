@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image "alpine"
+        }
+    }
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -10,22 +14,22 @@ pipeline {
     }
     stages {
         stage('Development | Prepering environment') {
-            agent {
-                docker {
-                    image "node:20-alpine"
-                }
-            }
             steps {
-                sh 'apk update && apk add git'
-                checkout scm
-                sh 'npm install'
+                sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
+                sh 'python3 -m ensurepip'
+                sh 'pip3 install --no-cache --upgrade pip setuptools'
+                sh 'echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories'
+                sh 'apk add --no-cache nodejs-current  --repository="http://dl-cdn.alpinelinux.org/alpine/edge/community"'
             }
         }
         stage('Development | Startup server') {
             steps {
                 withEnv([
                     "PORT=${env.FRONT_PORT}"
-                ]) { sh 'npm start -d' }
+                ]) {
+                    sh 'npm install'
+                    sh 'npm start -d'
+                }
             }  
         }
         stage('Verify developing') {
