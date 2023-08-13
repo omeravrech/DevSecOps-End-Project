@@ -1,4 +1,5 @@
 pipeline {
+    agent none
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -7,27 +8,15 @@ pipeline {
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_PORT = 3000
     }
-    
-    agent {
-        docker {
-            image "ubuntu"
-            args "-u root" 
-        }
-    }
     stages {
         stage('Development | Prepering environment') {
-            steps {
-                sh 'apt-get update'
-                sh 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata'
-                sh 'apt-get install -y software-properties-common'
-                sh 'add-apt-repository ppa:deadsnakes/ppa'
-                sh 'apt-get update'
-                sh 'apt-get install -y python3.8 python3-pip nodejs npm apturl'
+            agent {
+                docker {
+                    image "node:20-alpine"
+                }
             }
-        }
-        stage('Development | Intall dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                checkout scm
                 sh 'npm install'
             }
         }
