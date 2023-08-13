@@ -18,8 +18,7 @@ pipeline {
                 sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
                 sh 'pip3 install --no-cache --upgrade pip setuptools'
-                sh 'echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories'
-                sh 'apk add --no-cache nodejs-current  --repository="http://dl-cdn.alpinelinux.org/alpine/edge/community"'
+                sh 'apk add --update --no-cache nodejs npm'
             }
         }
         stage('Development | Startup server') {
