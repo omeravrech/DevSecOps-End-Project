@@ -22,7 +22,7 @@ pipeline {
                 sh 'apt-get install -y software-properties-common'
                 sh 'add-apt-repository ppa:deadsnakes/ppa'
                 sh 'apt-get update'
-                sh 'apt-get install -y python3.8 nodejs npm'
+                sh 'apt-get install -y python3.8 python3-pip nodejs npm'
             }
         }
         stage('Development | Intall dependencies') {
