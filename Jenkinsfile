@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
