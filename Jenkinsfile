@@ -17,11 +17,12 @@ pipeline {
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'apt update'
-                sh 'apt install -y software-properties-common'
+                sh 'apt-get update'
+                sh 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata'
+                sh 'apt-get install -y software-properties-common'
                 sh 'add-apt-repository ppa:deadsnakes/ppa'
-                sh 'apt update'
-                sh 'apt install -y python3.8 nodejs npm'
+                sh 'apt-get update'
+                sh 'apt-get install -y python3.8 nodejs npm'
             }
         }
         stage('Development | Intall dependencies') {
