@@ -37,7 +37,9 @@ pipeline {
             }  
         }
         stage('Verify developing') {
-            steps{
+            withEnv([
+                    "URL=http://localhost:${env.FRONT_PORT}"
+                ]) steps{
                 sh 'pip3 install -r requirements.txt'
                 sh 'pytest main.py'
             }
