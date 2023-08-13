@@ -12,16 +12,22 @@ pipeline {
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_PORT = 3000
     }
-    stages {
-        stage('Development | Prepering environment') {
+    stages {stage('Development | Prepering environment - copy repo') {
+            steps {
+                sh 'apk add --update --no-cache git'
+                sh 'printenv'
+            }
+        }
+        stage('Development | Prepering environment - install python') {
             steps {
                 sh 'apk add --update --no-cache python3'
                 sh 'ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
-                sh 'pip3 install --no-cache --upgrade pip setuptools'
+            }
+        }
+        stage('Development | Prepering environment - install node') {
+            steps {
                 sh 'apk add --update --no-cache nodejs npm'
-                sh 'apk add --update --no-cache git'
-                sh 'git clone'
             }
         }
         stage('Development | Startup server') {
