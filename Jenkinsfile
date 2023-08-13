@@ -10,7 +10,7 @@ pipeline {
     
     agent {
         docker {
-            image "ubuntu:lts"
+            image "ubuntu"
             args "-u root" 
         }
     }
