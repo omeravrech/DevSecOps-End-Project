@@ -10,18 +10,16 @@ pipeline {
     
     agent {
         docker {
-            image "alpine:latest"
+            image "ubuntu:lts"
             args "-u root" 
         }
     }
     stages {
         stage('Development | Prepering environment') {
             steps {
-                sh 'apk --no-cache --update upgrade'
-                sh 'apk --no-cache add ca-certificates'
-                sh 'apk add --update --no-cache apparmor apturl'
-                sh 'apk add --update --no-cache nodejs npm'
-                sh 'apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python'
+                sh 'apt upgrade'
+                sh 'apt install -y nodejs npm python3'
+                sh 'ln -sf python3 /usr/bin/python'
                 sh 'python3 -m ensurepip'
             }
         }
