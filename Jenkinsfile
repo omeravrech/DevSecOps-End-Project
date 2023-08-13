@@ -15,7 +15,7 @@ pipeline {
     stages {stage('Development | Prepering environment - copy repo') {
             steps {
                 sh 'apk add --update --no-cache git'
-                sh 'printenv'
+                sh 'git clone $GIT_URL --branch $BRANCH_NAME'
             }
         }
         stage('Development | Prepering environment - install python') {
