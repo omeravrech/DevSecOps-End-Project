@@ -18,9 +18,10 @@ pipeline {
         stage('Development | Prepering environment') {
             steps {
                 sh 'apt upgrade'
-                sh 'apt install -y nodejs npm python3'
-                sh 'ln -sf python3 /usr/bin/python'
-                sh 'python3 -m ensurepip'
+                sh 'apt install -y software-properties-common'
+                sh 'add-apt-repository ppa:deadsnakes/ppa'
+                sh 'apt upgrade'
+                sh 'apt install -y python3.8 nodejs npm'
             }
         }
         stage('Development | Intall dependencies') {
