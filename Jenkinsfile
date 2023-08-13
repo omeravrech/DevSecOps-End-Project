@@ -12,12 +12,13 @@ pipeline {
         FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_PORT = 3000
     }
-    stages {stage('Development | Prepering environment - copy repo') {
-            steps {
-                sh 'apk add --update --no-cache git'
-                sh 'git clone $GIT_URL --branch $BRANCH_NAME'
-            }
-        }
+    stages {
+        // stage('Development | Prepering environment - copy repo') {
+        //     steps {
+        //         sh 'apk add --update --no-cache git'
+        //         sh 'git clone $GIT_URL --branch $BRANCH_NAME'
+        //     }
+        // }
         stage('Development | Prepering environment - install python') {
             steps {
                 sh 'apk add --update --no-cache python3'
@@ -35,6 +36,7 @@ pipeline {
                 withEnv([
                     "PORT=${env.FRONT_PORT}"
                 ]) {
+                    sh 'cd server'
                     sh 'npm install'
                     sh 'npm start -d'
                 }
