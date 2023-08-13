@@ -16,6 +16,7 @@ pipeline {
                 }
             }
             steps {
+                sh 'apk update && apk add git'
                 checkout scm
                 sh 'npm install'
             }
