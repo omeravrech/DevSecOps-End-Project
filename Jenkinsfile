@@ -13,11 +13,6 @@ pipeline {
         FRONT_PORT = 3000
     }
     stages {
-        stage('Development | Prepering environment - Repo') {
-            steps {
-                sh 'ls -la'
-            }
-        }
         stage('Development | Prepering environment - install python') {
             steps {
                 sh 'apk add --update --no-cache python3'
