@@ -30,8 +30,9 @@ pipeline {
                 withEnv([
                     "PORT=${env.FRONT_PORT}"
                 ]) {
-                    sh 'npm install --prefix "./server/"'
-                    sh 'npm start -d'
+                    sh 'npm config set prefix "./server"'
+                    sh 'npm install'
+                    sh 'npm start &'
                 }
             }  
         }
