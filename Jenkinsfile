@@ -32,11 +32,13 @@ pipeline {
                 ]) {
                     sh 'npm install --prefix "./server/"'
                     sh 'npm start --prefix "./server/" &'
+                    sleep(time:10, unit:"SECONDS")
                 }
             }  
         }
         stage('Verify developing') {
             steps{
+                sh 'pip install -r requirements.txt'
                 sh 'pytest main.py'
             }
         }
