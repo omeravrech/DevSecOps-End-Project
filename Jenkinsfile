@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image "alpine"
+        }
+    }
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -9,16 +13,49 @@ pipeline {
         FRONT_PORT = 3000
     }
     stages {
-        stage('General | Prepering environment') {
+        stage('Development | Prepering environment - install python') {
+            steps {
+                sh 'apk add --update --no-cache python3'
+                sh 'ln -sf python3 /usr/bin/python'
+                sh 'python3 -m ensurepip'
+            }
+        }
+        stage('Development | Prepering environment - install node') {
+            steps {
+                sh 'apk add --update --no-cache nodejs npm'
+            }
+        }
+        stage('Development | Startup server') {
+            steps {
+                withEnv([
+                    "PORT=${env.FRONT_PORT}"
+                ]) {
+                    sh 'npm install --prefix "./public/"'
+                    sh 'npm start --prefix "./public/" &'
+                    sleep(time:10, unit:"SECONDS")
+                }
+            }  
+        }
+        stage('Development | Verify server') {
+            steps{
+                withEnv([
+                    "URL=http://localhost:${env.FRONT_PORT}"
+                ]) {
+                    sh 'pip3 install -r requirements.txt'
+                    sh 'pytest main.py'
+                }
+            }
+        }
+	stage('Build | Prepering environment') {
             parallel {
-                stage('Backend | Build') {
+                stage('Create backend image') {
                     steps {
                         script {
                             docker.build("${env.BACK_IMAGE_NAME}", "--no-cache ./server")
                         }
                     }
                 }
-                stage('Frontend | Build') {
+                stage('Create frontend image') {
                     steps {
                         script {
                             docker.build("${env.FRONT_IMAGE_NAME}", "--no-cache ./public")
@@ -27,65 +64,26 @@ pipeline {
                 }
             }
         }
-        stage('General | Verify images') {
+	stage('Build | Verify images') {
             steps {
                 script {
                     def exitCode1 = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
                     def exitCode2 = sh(script: "docker inspect ${env.FRONT_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
                     if (exitCode1 != 0 || exitCode2 != 0) {
-                        error "One or more builds failed"
+                        error "One or more builds failed."
                     }
                 }
             }
         }
-        stage('General | Raise dockers environment'){
-            steps{
-                withEnv([
-                    "BACK_IMAGE_NAME=${env.BACK_IMAGE_NAME}",
-                    "BACK_PORT=${env.BACK_PORT}",
-                    "FRONT_IMAGE_NAME=${env.FRONT_IMAGE_NAME}",
-                    "FRONT_PORT=${env.FRONT_PORT}"
-                ]) {
-                    sh 'docker-compose up -d'
-                }
-
-            }
-        }
-        stage('General | Integrity checks'){
-            parallel {
-                stage("Frontend | Integrity checks") {
-                    steps {
-                        script {
-                            def response = null
-                            retry(3) {
-                                sleep 10
-                                response = httpRequest "http://localhost:${env.FRONT_PORT}"
-                            }
-                            if ((response == null) || (response.status != 200)) {
-                                error "Failed to get a successful response"
-                            }
-                        }
+        stage('Build | Push to dockerhub') {
+            steps {
+                scripts {
+                    def exitCode1 = sh(script: "docker image push --all-tags ${env.GIT_BRANCH.toLowerCase()}-backend")
+                    def exitCode1 = sh(script: "docker image push --all-tags ${env.GIT_BRANCH.toLowerCase()}-frontend")
+                    if (exitCode1 != 0 || exitCode2 != 0) {
+                        error "One or more images doesn't succeed to be push."
                     }
                 }
-                // stage("Backend | Integrity checks") {
-                //     steps {
-                //         script {
-                //             def response = null
-                //             retry(3) {
-                //                 sleep 10
-                //                 response = httpRequest(
-                //                     url: "http://localhost:${env.BACK_PORT}/api/auth/register",
-                //                     httpMode: 'POST',
-                //                     requestBody: '{ "username": "test-user", "email": "test@email.com", "password": "some-test-password"}',
-                //                     customHeaders: [[name: 'Content-Type', value: 'application/json'], [name: 'Origin', value: "http://localhost:${env.FRONT_PORT}"]]
-                //                 )
-                //             }
-                //             if ((response == null) || (response.status != 200)) {
-                //                 error "Failed to get a successful response"
-                //             }
-                //         }
-                //     }
-                // }
             }
         }
     }
