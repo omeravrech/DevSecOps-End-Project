@@ -31,13 +31,13 @@ pipeline {
                     }
                 }
             }
-            stage("Test") {
-                agent { docker "python:alpine" }
-                steps {
-                    withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
-                        sh 'pip3 install -r requirements.txt'
-                        sh 'pytest main.py'
-                    }
+        }
+        stage("Test") {
+            agent { docker "python:alpine" }
+            steps {
+                withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
+                    sh 'pip3 install -r requirements.txt'
+                    sh 'pytest main.py'
                 }
             }
         }
