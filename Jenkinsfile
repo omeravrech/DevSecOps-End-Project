@@ -12,22 +12,20 @@ pipeline {
     stages {
         stage("Deployment") {
             parallel {
-                stages {
-                    stage("Frontend") {
-                        agent {
-                            docker { image: "node:alpine"}
-                        }
-                        steps {
-                            sh 'ls -la'
-                        }
+                stage("Frontend") {
+                    agent {
+                        docker { image: "node:alpine"}
                     }
-                    stage("Backend") {
-                        agent {
-                            docker { image: "python:alpine"}
-                        }
-                        steps {
-                            sh 'ls -la'
-                        }
+                    steps {
+                        sh 'ls -la'
+                    }
+                }
+                stage("Backend") {
+                    agent {
+                        docker { image: "python:alpine"}
+                    }
+                    steps {
+                        sh 'ls -la'
                     }
                 }
             }
