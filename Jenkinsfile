@@ -15,13 +15,28 @@ pipeline {
                 stage("Frontend") {
                     agent { docker "node:alpine" }
                     steps {
-                        sh 'ls -la'
+                        withEnv(["PORT=${env.FRONT_PORT}"]) {
+                            sh 'npm install --prefix "./public/"'
+                            sh 'npm start --prefix "./public/" &'
+                        }
                     }
                 }
                 stage("Backend") {
-                    agent { docker "python:alpine" }
+                    agent { docker "node:alpine" }
                     steps {
-                        sh 'ls -la'
+                        withEnv(["PORT=${env.BACK_PORT}"]) {
+                            sh 'npm install --prefix "./server/"'
+                            sh 'npm start --prefix "./server/" &'
+                        }
+                    }
+                }
+            }
+            stage("Test") {
+                agent { docker "python:alpine" }
+                steps {
+                    withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
+                        sh 'pip3 install -r requirements.txt'
+                        sh 'pytest main.py'
                     }
                 }
             }
