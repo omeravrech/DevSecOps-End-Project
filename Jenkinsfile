@@ -77,7 +77,7 @@ pipeline {
         }
         stage('Build | Push to dockerhub') {
             steps {
-                scripts {
+                script {
                     def exitCode1 = sh(script: "docker image push --all-tags ${env.GIT_BRANCH.toLowerCase()}-backend >/dev/null 2>&1", returnStatus: true)
                     def exitCode2 = sh(script: "docker image push --all-tags ${env.GIT_BRANCH.toLowerCase()}-frontend >/dev/null 2>&1", returnStatus: true)
                     if (exitCode1 != 0 || exitCode2 != 0) {
