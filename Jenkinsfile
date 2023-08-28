@@ -36,6 +36,7 @@ pipeline {
             steps {
                 sh 'docker ps'
             }
+        }
     }
     post {
         cleanup {
