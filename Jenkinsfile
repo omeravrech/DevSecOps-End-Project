@@ -15,7 +15,6 @@ pipeline {
                 stage('Build | Create backend image') {
                     steps {
                         sh "docker build -t ${env.BACK_IMAGE_NAME} ./public"
-                        }
                     }
                 }
                 stage('Build | create frontend image') {
