@@ -11,8 +11,9 @@ def get_url():
 
 def test_website_status_code():
     url = get_url()
+    print(f"PERFORMING TEST TO URL {url}")
     response = requests.get(url)
-    assert response.status_code == 200, "Failed: Expected status code 200, but received {}".format(response.status_code)
+    assert response.status_code == 200, f"Failed: Expected status code 200, but received {response.status_code}"
 
 if __name__ == "__main__":
     pytest.main([__file__])

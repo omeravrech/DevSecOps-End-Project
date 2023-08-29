@@ -30,7 +30,7 @@ pipeline {
                     sh "docker-compose up &"
                     def exitCode = 1
                     while (exitCode != 0) {
-                        sleep 10
+                        sleep 1
                         exitCode = sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true)
                     }
                     sh 'docker ps'
