@@ -31,7 +31,7 @@ pipeline {
                     def exitCode = 1
                     while (exitCode != 0) {
                         sleep 10
-                        exitCode = sh(script: "[[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]]", returnStatus: true)
+                        exitCode = sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true)
                     }
                     sh 'docker ps'
                 }
