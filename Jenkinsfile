@@ -13,14 +13,13 @@ pipeline {
             parallel {
                 stage('Build | Create backend image') {
                     steps {
-                            script {
-                                docker.build("${env.BACK_IMAGE_NAME}", "--no-cache ./public")
-                                def exitCode = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
-                                if (exitCode != 0) {
-                                    error "Can't build backend image"
-                                } else {
-                                    sh "docker run -p ${env.BACK_PORT}:5000 ${env.BACK_IMAGE_NAME}"
-                                }
+                        script {
+                            docker.build("${env.BACK_IMAGE_NAME}", "--no-cache ./public")
+                            def exitCode = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                            if (exitCode != 0) {
+                                error "Can't build backend image"
+                            } else {
+                                sh "docker run -p ${env.BACK_PORT}:5000 ${env.BACK_IMAGE_NAME}"
                             }
                         }
                     }
