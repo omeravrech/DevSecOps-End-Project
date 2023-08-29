@@ -42,6 +42,7 @@ pipeline {
             agent { docker "python:slim"}
             steps {
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
+                    sh 'ip a'
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
                 }
@@ -54,7 +55,7 @@ pipeline {
                 try {
                     sh "docker-compose down"
                 } finally {
-                    sh 'environment is stopped.'
+                    echo 'environment is stopped.'
                 }
             }
             sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
