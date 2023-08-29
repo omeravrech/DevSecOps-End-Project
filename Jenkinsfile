@@ -19,7 +19,7 @@ pipeline {
                             if (exitCode != 0) {
                                 error "Can't build backend image"
                             } else {
-                                sh "docker run -p ${env.BACK_PORT}:5000 ${env.BACK_IMAGE_NAME}"
+                                sh "docker run -p ${env.BACK_PORT}:5000 -d ${env.BACK_IMAGE_NAME}"
                             }
                         }
                     }
@@ -32,7 +32,7 @@ pipeline {
                             if (exitCode != 0) {
                                 error "Can't build fronend image"
                             } else {
-                                sh "docker run -p ${env.FRONT_PORT}:3000 ${env.FRONT_IMAGE_NAME}"
+                                sh "docker run -p ${env.FRONT_PORT}:3000 -d ${env.FRONT_IMAGE_NAME}"
                             }
                         }
                     }
