@@ -1,6 +1,5 @@
 pipeline {
-    agent { label 'docker' }
-
+    agent any
     environment {
         MAJOR_BUILD = 1
         MINOR_BUILD = 0
@@ -10,31 +9,45 @@ pipeline {
         FRONT_PORT = 3000
     }
     stages {
-        stage("Deployment") {
+        stage("Build") {
             parallel {
-                stage("Frontend") {
-                    agent { docker "node:alpine" }
+                stage('Build | Create backend image') {
                     steps {
-                        withEnv(["PORT=${env.FRONT_PORT}"]) {
-                            sh 'npm install --prefix "./public/"'
-                            sh 'npm start --prefix "./public/" &'
+                            script {
+                                docker.build("${env.BACK_IMAGE_NAME}", "--no-cache ./public")
+                                def exitCode = sh(script: "docker inspect ${env.BACK_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                                if (exitCode != 0) {
+                                    error "Can't build backend image"
+                                } else {
+                                    sh "docker run -p ${env.BACK_PORT}:5000 ${env.BACK_IMAGE_NAME}"
+                                }
+                            }
                         }
                     }
                 }
-                stage("Backend") {
-                    agent { docker "node:alpine" }
+                stage('Build | create frontend image') {
                     steps {
-                        withEnv(["PORT=${env.BACK_PORT}"]) {
-                            sh 'npm install --prefix "./server/"'
-                            sh 'npm start --prefix "./server/" &'
+                        script {
+                            docker.build("${env.FRONT_IMAGE_NAME}", "--no-cache ./public")
+                            def exitCode = sh(script: "docker inspect ${env.FRONT_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                            if (exitCode != 0) {
+                                error "Can't build fronend image"
+                            } else {
+                                sh "docker run -p ${env.FRONT_PORT}:3000 ${env.FRONT_IMAGE_NAME}"
+                            }
                         }
                     }
                 }
             }
         }
+        
         stage("Test") {
+            agent { docker "python:apline"}
             steps {
-                sh 'docker ps'
+                withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
+                    sh 'pip3 install -r requirements.txt'
+                    sh 'pytest main.py'
+                }
             }
         }
     }
