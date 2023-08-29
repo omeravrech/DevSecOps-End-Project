@@ -33,7 +33,6 @@ pipeline {
                         sleep 1
                         exitCode = sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true)
                     }
-                    sh 'docker ps'
                 }
                 
             }
@@ -42,7 +41,6 @@ pipeline {
             agent { docker "python:slim"}
             steps {
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
-                    sh 'ip a'
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
                 }
