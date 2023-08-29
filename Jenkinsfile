@@ -26,11 +26,19 @@ pipeline {
         }
         stage("Raise environment") {
             steps {
-                sh "docker-compose up &"
+                script {
+                    def exitCode = 1
+                    while (exitCode != 0) {
+                        sleep 10
+                        exitCode = sh(script: "docker inspect ${env.FRONT_IMAGE_NAME} >/dev/null 2>&1", returnStatus: true)
+                    }
+                    sh 'docker ps'
+                }
+                
             }
         }
         stage("Test") {
-            agent { docker "python:apline"}
+            agent { docker "python:slim"}
             steps {
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
                     sh 'pip3 install -r requirements.txt'
@@ -43,7 +51,7 @@ pipeline {
         cleanup {
             script {
                 try {
-                    sh "docker-compuse down"
+                    sh "docker-compose down"
                 } finally {
                     sh 'environment is stopped.'
                 }
