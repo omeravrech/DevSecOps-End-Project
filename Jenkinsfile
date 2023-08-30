@@ -28,10 +28,8 @@ pipeline {
             steps {
                 script {
                     sh "docker-compose up &"
-                    def exitCode = 1
-                    while (exitCode != 0) {
+                    while (sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true) != 0) {
                         sleep 1
-                        exitCode = sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true)
                     }
                 }
                 
@@ -41,6 +39,7 @@ pipeline {
             agent { docker "python:slim"}
             steps {
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
+                    sh 'ip addr'
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
                 }
@@ -51,7 +50,7 @@ pipeline {
         cleanup {
             script {
                 try {
-                    sh "docker-compose down"
+                    //sh "docker-compose down"
                 } finally {
                     echo 'environment is stopped.'
                 }
