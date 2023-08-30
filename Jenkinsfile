@@ -36,10 +36,14 @@ pipeline {
             }
         }
         stage("Test") {
-            agent { docker "python:slim"}
+            agent {
+                docker {
+                    image "python:slim"
+                    args "--net=host"
+                }
+            }
             steps {
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
-                    sh 'ip addr'
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
                 }
@@ -50,7 +54,7 @@ pipeline {
         cleanup {
             script {
                 try {
-                    //sh "docker-compose down"
+                    sh "docker-compose down"
                 } finally {
                     echo 'environment is stopped.'
                 }
