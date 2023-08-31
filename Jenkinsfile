@@ -1,25 +1,30 @@
 pipeline {
     agent any
     environment {
-        MAJOR_BUILD = 1
-        MINOR_BUILD = 0
-        BACK_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-backend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
-        FRONT_IMAGE_NAME = "${env.GIT_BRANCH.toLowerCase()}-frontend:${env.MAJOR_BUILD}.${env.MINOR_BUILD}.${env.BUILD_ID}"
         FRONT_PORT = 3000
         BACK_PORT = 5000
         DB_PORT = 27107
+        DOCKER_REPO_NAME="omeravrech/devsecops12"
     }
     stages {
-        stage("Build") {
+        stage('Build Docker Images') {
             parallel {
-                stage('Build | Create backend image') {
+                stage('Build Backend Image') {
                     steps {
-                        sh "docker build -t ${env.BACK_IMAGE_NAME} ./public"
+                        script {
+                            // Build backend Docker image
+                            docker.build("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBER}", "./server")
+                            docker.build("${env.DOCKER_REPO_NAME}/backend-image:latest", "./server")
+                        }
                     }
                 }
-                stage('Build | create frontend image') {
+                stage('Build Frontend Image') {
                     steps {
-                        sh "docker build -t ${env.FRONT_IMAGE_NAME} ./public"
+                        script {
+                            // Build frontend Docker image
+                            docker.build("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}", "./public")
+                            docker.build("${env.DOCKER_REPO_NAME}/frontend-image:latest", "./public")
+                        }
                     }
                 }
             }
@@ -27,15 +32,35 @@ pipeline {
         stage("Raise environment") {
             steps {
                 script {
-                    sh "docker-compose up &"
-                    while (sh(script: "[ \$(docker ps | grep ${env.FRONT_IMAGE_NAME} | wc -l) -ne 0 ]", returnStatus: true) != 0) {
-                        sleep 1
+                    // Run database container
+                    docker.image("mongo:slim").run("--name database-container -p ${env.DB_PORT}:27017 -d")
+
+                    // Run backend container
+                    docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").run("--link database-container --name backend-container -p ${env.BACK_PORT}:5000 -d")
+
+                    // Run frontend container
+                    docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").run("--link backend-container --name frontend-container -p ${env.FRONT_PORT}:3000 -d")
+
+                    // Enter to busy-wait mode until the last docker start to run.
+                    while (sh(script: "[ \$(docker ps | grep frontend-container | wc -l) -ne 0 ]", returnStatus: true) != 0) {
+                        sleep 2
                     }
                 }
-                
             }
         }
-        stage("Test") {
+        stage('Verify Containers') {
+            steps {
+                script {
+                    def backendStatus = docker.inside("--rm backend-container", 'sh', '-c', 'echo "Backend is running"')
+                    def frontendStatus = docker.inside("--rm frontend-container", 'sh', '-c', 'echo "Frontend is running"')
+
+                    if (backendStatus.trim() != "Backend is running" || frontendStatus.trim() != "Frontend is running") {
+                        error "Container verification failed"
+                    }
+                }
+            }
+        }
+        stage("Run tests") {
             agent {
                 docker {
                     image "python:slim"
@@ -49,18 +74,34 @@ pipeline {
                 }
             }
         }
+        stage('Push Images to Docker Hub') {
+            steps {
+                script {
+                    // Define the DockerHub Credentials
+                    def dockerHubCredentials = credentials('DevSecOps-Token')
+
+                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
+                        
+                        // Push backend image
+                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").push()
+                        
+                        // Push backend latest image
+                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").push()
+
+                        // Push frontend image
+                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").push()
+
+                        // Push frontend latest image
+                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").push()
+                    }
+                }
+            }
+        }
     }
     post {
         cleanup {
-            script {
-                try {
-                    sh "docker-compose down"
-                } finally {
-                    echo 'environment is stopped.'
-                }
-            }
-            sh "docker rmi -f ${env.BACK_IMAGE_NAME}"
-            sh "docker rmi -f ${env.FRONT_IMAGE_NAME}"
+            sh 'docker stop backend-container frontend-container database-container'
+            sh 'docker rm backend-container frontend-container database-container'
             cleanWs()
         }
     }
