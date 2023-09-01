@@ -81,21 +81,27 @@ pipeline {
                 script {
                     // Define the DockerHub Credentials
                     def dockerHubCredentials = credentials('DevSecOps-Token')
-
+                        
+                    // Push backend image
+                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
                     docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
-                        
-                        // Push backend image
                         docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
-                        
-                        // Push backend latest image
+                    }
+                    // Push backend latest image
+                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
                         docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
-
-                        // Push frontend image
-                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
-
-                        // Push frontend latest image
+                    }
+                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
+                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
+                    // Push frontend image
+                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
                         docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
                     }
+                    // Push frontend latest image
+                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
+                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
+                    }
+                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
                 }
             }
         }
