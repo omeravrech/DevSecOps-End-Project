@@ -82,19 +82,18 @@ pipeline {
                     // Define the DockerHub Credentials
                     def dockerHubCredentials = credentials('DevSecOps-Token')
                     sh "echo ${dockerHubCredentials} | docker login --username DevSecOps-Token --password-stdin https://index.docker.io/v1/"
-                        
-                    // Push backend image
-                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
-                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    // Push frontend image
-                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
-                    sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
-                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
-                }
-            }
+        //             // Push backend image
+        //             echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
+        //             sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+        //             sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+        //             echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
+        //             // Push frontend image
+        //             echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
+        //             sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+        //             sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+        //             echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
+               }
+           }
         }
     }
     post {
