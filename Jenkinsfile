@@ -81,7 +81,7 @@ pipeline {
                 script {
                     // Define the DockerHub Credentials
                     def dockerHubCredentials = Credentials('DevSecOps-Token')
-                    
+                    sh "docker login --username DevSecOps-Token --password ${dockerHubCredentials} https://index.docker.io/v1/"
                     // Push backend image
                     echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
                     sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
