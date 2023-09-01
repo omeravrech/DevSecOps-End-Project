@@ -30,6 +30,9 @@ pipeline {
             }
         }
         stage("Raise environment") {
+            options {
+                timeout(time: 5, unit: 'MINUTES') 
+            }
             steps {
                 script {
                     // Run database container
@@ -99,7 +102,7 @@ pipeline {
     }
     post {
         cleanup {
-            sh 'docker rm -f database-container backend-container frontend-container'
+            // sh 'docker rm -f database-container backend-container frontend-container'
             cleanWs()
         }
     }
