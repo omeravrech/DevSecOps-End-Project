@@ -4,7 +4,7 @@ pipeline {
         FRONT_PORT = 3000
         BACK_PORT = 5000
         DB_PORT = 27107
-        DOCKER_REPO_NAME="omeravrech/devsecops12"
+        DOCKER_REPO_NAME="omeravrech"
     }
     stages {
         stage('Build Docker Images') {
@@ -108,7 +108,7 @@ pipeline {
     }
     post {
         cleanup {
-            // sh 'docker rm -f database-container backend-container frontend-container'
+            sh 'docker rm -f database-container backend-container frontend-container'
             cleanWs()
         }
     }
