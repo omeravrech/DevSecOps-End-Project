@@ -100,8 +100,7 @@ pipeline {
     }
     post {
         cleanup {
-            sh 'docker stop database-container backend-container frontend-container'
-            sh 'docker rm backend-container frontend-container database-container'
+            sh 'docker rm -f database-container backend-container frontend-container'
             cleanWs()
         }
     }
