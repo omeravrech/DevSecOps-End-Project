@@ -81,26 +81,17 @@ pipeline {
                 script {
                     // Define the DockerHub Credentials
                     def dockerHubCredentials = credentials('DevSecOps-Token')
+                    sh "echo ${dockerHubCredentials} | docker login --username DevSecOps-Token --password-stdin https://index.docker.io/v1/"
                         
                     // Push backend image
                     echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
-                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
-                    }
-                    // Push backend latest image
-                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
-                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
-                    }
+                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
                     echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
                     // Push frontend image
-                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
-                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
-                    }
-                    // Push frontend latest image
-                    docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
-                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
-                    }
+                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
+                    sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+                    sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
                     echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
                 }
             }
