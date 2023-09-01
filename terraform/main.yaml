@@ -1,0 +1,9 @@
+---
+- name: Ensure Nginx is at the lastes version
+  apt:
+    name: Nginx
+    state: lastes
+- name: make sure Nginx is runnig
+  systemd:
+  state: started
+  name: Nginx
