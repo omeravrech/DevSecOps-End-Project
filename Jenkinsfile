@@ -13,7 +13,7 @@ pipeline {
                     steps {
                         script {
                             def dockerHubCredentials = credentials('DevSecOps-Token')
-                            sh "echo $(DevSecOps-Token)"
+                            echo " ${DevSecOps-Token} "
                             // Build backend Docker image
                             docker.build("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBER}", "./server")
                             docker.build("${env.DOCKER_REPO_NAME}/backend-image:latest", "./server")
