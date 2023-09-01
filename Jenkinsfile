@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Run database container
-                    docker.image("mongo:slim").run("--name database-container -p ${env.DB_PORT}:27017 -d")
+                    docker.image("mongodb/atlas").run("--name database-container -p ${env.DB_PORT}:27017 -d")
 
                     // Run backend container
                     docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").run("--link database-container --name backend-container -p ${env.BACK_PORT}:5000 -d")
@@ -100,7 +100,7 @@ pipeline {
     }
     post {
         cleanup {
-            sh 'docker stop backend-container frontend-container database-container'
+            sh 'docker stop database-container backend-container frontend-container'
             sh 'docker rm backend-container frontend-container database-container'
             cleanWs()
         }
