@@ -12,8 +12,6 @@ pipeline {
                 stage('Build Backend Image') {
                     steps {
                         script {
-                            def dockerHubCredentials = credentials('DevSecOps-Token')
-                            echo " ${DevSecOps-Token} "
                             // Build backend Docker image
                             docker.build("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBER}", "./server")
                             docker.build("${env.DOCKER_REPO_NAME}/backend-image:latest", "./server")
@@ -83,17 +81,20 @@ pipeline {
                 script {
                     // Define the DockerHub Credentials
                     def dockerHubCredentials = credentials('DevSecOps-Token')
-                    sh "docker login --username omeravrech --password ${dockerHubCredentials}"
-                    // Push backend image
-                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
-                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
-                    // Push frontend image
-                    echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
-                    sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
-                    sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
-                    echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
+                      withCredentials([string(credentialsId: 'DevSecOps-Token')]) {
+
+                        // sh "docker login --username omeravrech --password ${dockerHubCredentials}"
+                        // Push backend image
+                        echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
+                        sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+                        sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+                        echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
+                        // Push frontend image
+                        echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
+                        sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+                        sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+                        echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
+                    }
                }
            }
         }
