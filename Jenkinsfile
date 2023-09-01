@@ -22,7 +22,7 @@ pipeline {
                     steps {
                         script {
                             // Build frontend Docker image
-                            docker.build("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}", "./public")
+                            docker.build("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}", "./public")
                             docker.build("${env.DOCKER_REPO_NAME}/frontend-image:latest", "./public")
                         }
                     }
@@ -36,10 +36,10 @@ pipeline {
                     docker.image("mongodb/atlas").run("--name database-container -p ${env.DB_PORT}:27017 -d")
 
                     // Run backend container
-                    docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").run("--link database-container --name backend-container -p ${env.BACK_PORT}:5000 -d")
+                    docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").run("--link database-container --name backend-container -p ${env.BACK_PORT}:5000 -d")
 
                     // Run frontend container
-                    docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").run("--link backend-container --name frontend-container -p ${env.FRONT_PORT}:3000 -d")
+                    docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").run("--link backend-container --name frontend-container -p ${env.FRONT_PORT}:3000 -d")
 
                     // Enter to busy-wait mode until the last docker start to run.
                     while (sh(script: "[ \$(docker ps | grep frontend-container | wc -l) -ne 0 ]", returnStatus: true) != 0) {
@@ -83,16 +83,16 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', dockerHubCredentials) {
                         
                         // Push backend image
-                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").push()
+                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
                         
                         // Push backend latest image
-                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_NUMBERE}").push()
+                        docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").push()
 
                         // Push frontend image
-                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").push()
+                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
 
                         // Push frontend latest image
-                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_NUMBERE}").push()
+                        docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").push()
                     }
                 }
             }
