@@ -42,9 +42,10 @@ pipeline {
                     docker.image("${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}").run("--link backend-container --name frontend-container -p ${env.FRONT_PORT}:3000 -d")
 
                     // Enter to busy-wait mode until the last docker start to run.
-                    while (sh(script: "[ \$(docker ps | grep frontend-container | wc -l) -ne 0 ]", returnStatus: true) != 0) {
-                        sleep 2
-                    }
+                    //while (sh(script: "[ \$(docker ps | grep frontend-container | wc -l) -ne 0 ]", returnStatus: true) != 0) {
+                    //    sleep 2
+                    //}
+                    sleep(time:10,unit:"SECONDS")
                 }
             }
         }
