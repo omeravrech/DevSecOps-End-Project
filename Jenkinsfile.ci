@@ -78,12 +78,12 @@ pipeline {
         }
         stage('Push Images to Docker Hub') {
             steps {
-                script {
-                    // Define the DockerHub Credentials
-                    def dockerHubCredentials = credentials('DevSecOps-Token')
-                      withCredentials([string(credentialsId: 'DevSecOps-Token')]) {
-
-                        // sh "docker login --username omeravrech --password ${dockerHubCredentials}"
+                // Define the DockerHub Credentials
+                withCredentials([string(credentialsId: "DevSecOps-Token", variable: 'DOCKER_HUB_TOKEN')]) {
+                    script {
+                    
+                        sh "docker logout" // Logout first to clear any previous credentials
+                        sh "echo $DOCKER_HUB_TOKEN | docker login --username omeravrech@gmail.com --password-stdin"
                         // Push backend image
                         echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
                         sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
