@@ -70,6 +70,7 @@ pipeline {
                 }
             }
             steps {
+                sleep(time: 2, unit: 'SECONDS')
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
@@ -81,7 +82,6 @@ pipeline {
                 // Define the DockerHub Credentials
                 withCredentials([string(credentialsId: "DevSecOps-Token", variable: 'DOCKER_HUB_TOKEN')]) {
                     script {
-                    
                         sh "docker logout" // Logout first to clear any previous credentials
                         sh "echo $DOCKER_HUB_TOKEN | docker login --username omeravrech@gmail.com --password-stdin"
                         // Push backend image
