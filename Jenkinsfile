@@ -46,7 +46,7 @@ pipeline {
 
                     // Enter to busy-wait mode until the last docker start to run.
                     while (sh(script: "[ \$(docker ps | grep frontend-container | wc -l) -ne 0 ]", returnStatus: true) != 0) {
-                        sleep 2
+                        sleep(time: 2, unit: 'SECONDS')
                     }
                 }
             }
@@ -59,7 +59,7 @@ pipeline {
                 }
             }
             steps {
-                sleep(time: 2, unit: 'SECONDS')
+                sleep(time: 5, unit: 'SECONDS')
                 withEnv([ "URL=http://localhost:${env.FRONT_PORT}" ]) {
                     sh 'pip3 install -r ./testing/requirements.txt'
                     sh 'pytest ./testing/main.py'
