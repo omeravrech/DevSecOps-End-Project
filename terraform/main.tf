@@ -64,3 +64,21 @@ resource "aws_key_pair" "frontend-key-pair" {
     key_name                = "frontend-public-key"
     public_key              = trimspace(tls_private_key.this[1].public_key_openssh)
 }
+
+resource "aws_instance" "backend" {
+    ami                     = "ami-04e601abe3e1a910f"
+    instance_type           = "t2.micro"
+    availability_zone       = "eu-central-1a"
+    subnet_id               = aws_subnet.backend-subnet.id
+    security_groups         = [aws_security_group.sg-ter-1.id]
+    key_name                = aws_key_pair.backend-key-pair[0].key_name
+}
+
+resource "aws_instance" "frontend" {
+    ami                     = "ami-04e601abe3e1a910f"
+    instance_type           = "t2.micro"
+    availability_zone       = "eu-central-1a"
+    subnet_id               = aws_subnet.frontend-subnet.id
+    security_groups         = [aws_security_group.sg-ter-1.id]
+    key_name                = aws_key_pair.frontend-key-pair[0].key_name
+}
