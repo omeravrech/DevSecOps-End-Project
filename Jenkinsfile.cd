@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    environment {
+        FRONT_PORT = 3000
+        BACK_PORT = 5000
+        DB_PORT = 27107
+        DOCKER_REPO_NAME="omeravrech"
+        SSH_KEYS_FOLDER="~/.ssh/production/"
+    }
+    stages {
+        stage("Terraform") {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-cre"]]) {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+        stage("Prepare Ansible") {
+            steps {
+                script {
+                    sh "mkdir -p ${env.SSH_KEYS_FOLDER}"
+                    sh "terraform output backend_private_key > ${env.SSH_KEYS_FOLDER}/backend_private_key.pem"
+                    sh "terraform output frontend_private_key > ${env.SSH_KEYS_FOLDER}/frontend_private_key.pem"
+''
+                    def backend_ip = sh 'terraform outputs backend_public_ip'
+                    def frontend_ip = sh 'terraform outputs frontend_public_ip'
+                    sh "echo << EOF
+                        aws_servers:
+                            hosts:
+                                backend:
+                                    ansible_ssh_host: \"${backend_ip}\"
+                                    ansible_ssh_port: 22
+                                    ansible_ssh_user: ubuntu
+                                    ansible_ssh_private_key_file: ${env.SSH_KEYS_FOLDER}/backend_private_key.pem
+                                    ansible_become: yes
+
+                                frontend:
+                                    ansible_ssh_host: \"${frontend_ip}\"
+                                    ansible_ssh_port: 22
+                                    ansible_ssh_user: ubuntu
+                                    ansible_ssh_private_key_file: ${env.SSH_KEYS_FOLDER}/frontend_private_key.pem
+                                    ansible_become: yes
+                       EOF > ./ansible/hosts.yaml"
+                }
+            }
+        }
+        stage("Raise docker environment in EC2s"){
+            steps {
+                sh 'ansible-playbook -i ./ansible/hosts.yaml ./ansible/install_docker.yaml'
+            }
+        }
+    }
+}

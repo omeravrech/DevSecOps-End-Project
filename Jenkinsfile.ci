@@ -51,17 +51,6 @@ pipeline {
                 }
             }
         }
-        // stage('Verify Containers') {
-        //     steps {
-        //         script {
-        //             def backendStatus = docker.inside("--rm backend-container", 'sh', '-c', 'echo "Backend is running"')
-        //             def frontendStatus = docker.inside("--rm frontend-container", 'sh', '-c', 'echo "Frontend is running"')
-        //             if (backendStatus.trim() != "Backend is running" || frontendStatus.trim() != "Frontend is running") {
-        //                 error "Container verification failed"
-        //             }
-        //         }
-        //     }
-        // }
         stage("Run tests") {
             agent {
                 docker {
