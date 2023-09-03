@@ -54,8 +54,10 @@ pipeline {
         }
     }
     post {
-        cleanup {
+        failure {
             sh 'terraform destroy -auto-approve'
+        }
+        cleanup {
             cleanWs()
         }
     }
