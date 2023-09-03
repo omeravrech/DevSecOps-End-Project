@@ -19,10 +19,12 @@ pipeline {
         stage("Prepare Ansible") {
             steps {
                 script {
+                    // Save new machines certificates
                     sh "mkdir -p ${env.SSH_KEYS_FOLDER}"
                     sh "terraform output backend_private_key > ${env.SSH_KEYS_FOLDER}/backend_private_key.pem"
                     sh "terraform output frontend_private_key > ${env.SSH_KEYS_FOLDER}/frontend_private_key.pem"
-''
+
+                    // Creating Ansible inventory file based on terraform outputs
                     def backend_ip = sh 'terraform outputs backend_public_ip'
                     def frontend_ip = sh 'terraform outputs frontend_public_ip'
                     sh "echo << EOF
@@ -49,6 +51,12 @@ pipeline {
             steps {
                 sh 'ansible-playbook -i ./ansible/hosts.yaml ./ansible/install_docker.yaml'
             }
+        }
+    }
+    post {
+        cleanup {
+            sh 'terraform destroy -auto-approve'
+            cleanWs()
         }
     }
 }
