@@ -27,7 +27,7 @@ pipeline {
                     // Creating Ansible inventory file based on terraform outputs
                     def backend_ip = sh 'terraform outputs backend_public_ip'
                     def frontend_ip = sh 'terraform outputs frontend_public_ip'
-                    sh "echo << EOF
+                    sh """echo << EOF
                         aws_servers:
                             hosts:
                                 backend:
@@ -43,7 +43,7 @@ pipeline {
                                     ansible_ssh_user: ubuntu
                                     ansible_ssh_private_key_file: ${env.SSH_KEYS_FOLDER}/frontend_private_key.pem
                                     ansible_become: yes
-                       EOF > ./ansible/hosts.yaml"
+                       EOF > ./ansible/hosts.yaml"""
                 }
             }
         }
