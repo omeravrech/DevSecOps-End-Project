@@ -58,7 +58,7 @@ aws_servers:
         }
         stage("Raise docker environment in EC2s"){
             steps {
-                sh 'ansible-playbook -i ./ansible/hosts.yaml ./ansible/install_docker.yaml'
+                sh 'ansible-playbook -i ./ansible/hosts.yaml ./ansible/deploy_docker.yaml'
             }
         }
         stage("Lunch Containers"){
