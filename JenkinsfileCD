@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage("Terraform") {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-cre"]]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-omer"]]) {
                     sh 'terraform -chdir="./terraform" init'
                     sh 'terraform -chdir="./terraform" apply -auto-approve'
                 }
@@ -78,7 +78,7 @@ aws_servers:
     }
     post {
         failure {
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-cre"]]) {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-omer"]]) {
                 sh 'terraform -chdir="./terraform" destroy -auto-approve'
             }
         }
