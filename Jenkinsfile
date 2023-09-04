@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     // Run database container
-                    docker.image("mongodb/atlas").run("--name database-container -p ${env.DB_PORT}:27017 -d")
+                    docker.image("mongodb/mongodb-community-server:latest").run("--name database-container -p ${env.DB_PORT}:27017 -e MONGO_INITDB_DATABASE=chat -d")
 
                     // Run backend container
                     docker.image("${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}").run("--link database-container --name backend-container -p ${env.BACK_PORT}:5000 -d")

@@ -1,0 +1,16 @@
+- name: Lunch container
+  hosts: "{{ HOSTS }}"
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Run Docker container
+      docker_container:
+        name: "{{ NAME }}"
+        image: "{{ IMAGE }}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ HOST_PORT }}:{{ CONTAINER_PORT }}"
+        env:
+          PORT: "{{ CONTAINER_PORT }}"
+          MONGO_URL: "{{MONGO_URL}}"
