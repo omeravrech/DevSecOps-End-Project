@@ -55,7 +55,9 @@ pipeline {
     }
     post {
         failure {
-            sh 'terraform -chdir="./terraform" destroy -auto-approve'
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',credentialsId: "aws-cre"]]) {
+                sh 'terraform -chdir="./terraform" destroy -auto-approve'
+            }
         }
         cleanup {
             cleanWs()
