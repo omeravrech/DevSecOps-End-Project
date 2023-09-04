@@ -76,12 +76,12 @@ pipeline {
                         // Push backend image
                         echo "Pushing images for ${env.DOCKER_REPO_NAME}/backend-image"
                         sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
-                        sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:${env.BUILD_ID}"
+                        sh "docker push ${env.DOCKER_REPO_NAME}/backend-image:latest"
                         echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/backend-image"
                         // Push frontend image
                         echo "Pushing images for ${env.DOCKER_REPO_NAME}/frontend-image"
-                        sh " docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
                         sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:${env.BUILD_ID}"
+                        sh "docker push ${env.DOCKER_REPO_NAME}/frontend-image:latest"
                         echo "Succeed to push images for ${env.DOCKER_REPO_NAME}/frontend-image"
                     }
                }
